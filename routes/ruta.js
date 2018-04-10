@@ -1,14 +1,12 @@
 var express = require('express');
-var bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
 
 var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
-var Usuario = require('../models/usuario');
+var Ruta = require('../models/ruta');
 
 // =========================================
-// Obtener todos los usuarios
+// Obtener todos los rutas
 // =========================================
 
 app.get('/', (request, response, next) => {
@@ -16,78 +14,72 @@ app.get('/', (request, response, next) => {
     var desde = request.query.desde || 0;
     desde = Number(desde);
 
-    Usuario.find({}, 'nombre email img role')
+    Ruta.find({})
         .skip(desde)
         .limit(5)
+        .populate('usuario', 'nombre email')
         .exec(
 
-            (err, usuarios) => {
+            (err, rutas) => {
 
                 if (err) {
                     return response.status(500).json({
                         ok: false,
-                        mensaje: 'Error cargando usuarios!',
+                        mensaje: 'Error cargando rutas!',
                         errors: err
                     });
                 }
 
-                Usuario.count({}, (err, cuenta) => {
+                Ruta.count({}, (err, cuenta) => {
                     response.status(200).json({
                         ok: true,
-                        usuarios: usuarios,
+                        rutas: rutas,
                         total: cuenta
                     });
-
-                })
-
-
+                });
             });
-
 });
 
 // =========================================
-// Actualizar nuevo usuario
+// Actualizar ruta
 // =========================================
 
 app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
-    Usuario.findById(id, (err, usuario) => {
+    Ruta.findById(id, (err, ruta) => {
         if (err) {
             return response.status(500).json({
                 ok: false,
-                mensaje: 'Error al buscar usuario!',
+                mensaje: 'Error al buscar ruta!',
                 errors: err
             });
         }
 
-        if (!usuario) {
+        if (!ruta) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Usuario no existe!',
-                errors: { message: 'Usuario no encontrado!' }
+                mensaje: 'Ruta no existe!',
+                errors: { message: 'Ruta no encontrado!' }
             });
         }
 
-        usuario.nombre = body.nombre;
-        usuario.email = body.email;
-        usuario.role = body.role;
+        ruta.nombre = body.nombre;
+        ruta.usuario = request.usuario._id;
 
-        usuario.save((err, usuarioUpdate) => {
+        ruta.save((err, rutaUpdate) => {
             if (err) {
                 return response.status(400).json({
                     ok: false,
-                    mensaje: 'Error al actualizar usuario!',
+                    mensaje: 'Error al actualizar ruta!',
                     errors: err
                 });
             }
 
-            usuarioUpdate.password = '**********';
-
             response.status(200).json({
                 ok: true,
-                usuario: usuarioUpdate
+                ruta: rutaUpdate
             });
         });
 
@@ -96,66 +88,62 @@ app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
 });
 
 // =========================================
-// Crear nuevo usuario
+// Crear nueva ruta
 // =========================================
 
 app.post('/', mdAutenticacion.verificaToken, (request, response) => {
     var body = request.body;
 
-    var usuario = new Usuario({
+    var ruta = new Ruta({
         nombre: body.nombre,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        img: body.img,
-        role: body.role
+        usuario: request.usuario._id
     });
 
-    usuario.save((err, newUsuario) => {
+    ruta.save((err, newRuta) => {
 
         if (err) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Error al crear usuario!',
+                mensaje: 'Error al crear ruta!',
                 errors: err
             });
         }
 
         response.status(201).json({
             ok: true,
-            usuario: newUsuario,
-            usuarioToken: request.usuario
+            ruta: newRuta,
         });
     });
 });
 
 // =========================================
-// Eliminar usuario
+// Eliminar ruta
 // =========================================
 
 app.delete('/:id', mdAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
 
-    Usuario.findByIdAndRemove(id, (err, usuarioDelete) => {
+    Ruta.findByIdAndRemove(id, (err, rutaDelete) => {
 
         if (err) {
             return response.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar usuario!',
+                mensaje: 'Error al borrar ruta!',
                 errors: err
             });
         }
 
-        if (!usuarioDelete) {
+        if (!rutaDelete) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Usuario no existe!',
-                errors: { message: 'Usuario no existe!' }
+                mensaje: 'Ruta no existe!',
+                errors: { message: 'Ruta no existe!' }
             });
         }
 
         response.status(200).json({
             ok: true,
-            usuario: usuarioDelete
+            ruta: rutaDelete
         });
 
     });

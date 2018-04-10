@@ -15,7 +15,10 @@ app.use(bodyParser.json())
 var appRoutes = require('./routes/app');
 var usuarioRoutes = require('./routes/usuario');
 var loginRoutes = require('./routes/login');
-
+var vehiculoRoutes = require('./routes/vehiculo');
+var rutaRoutes = require('./routes/ruta');
+var busquedaRoutes = require('./routes/busqueda');
+var uploadRoutes = require('./routes/upload');
 
 
 //Conexion a la base de datos
@@ -28,6 +31,10 @@ mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) =>
 
 //Rutas
 app.use('/usuario', usuarioRoutes);
+app.use('/vehiculo', vehiculoRoutes);
+app.use('/ruta', rutaRoutes);
+app.use('/busqueda', busquedaRoutes);
+app.use('/upload', uploadRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 

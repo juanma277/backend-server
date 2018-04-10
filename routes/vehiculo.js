@@ -1,14 +1,12 @@
 var express = require('express');
-var bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
 
 var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
-var Usuario = require('../models/usuario');
+var Vehiculo = require('../models/vehiculo');
 
 // =========================================
-// Obtener todos los usuarios
+// Obtener todos los vehiculos
 // =========================================
 
 app.get('/', (request, response, next) => {
@@ -16,78 +14,76 @@ app.get('/', (request, response, next) => {
     var desde = request.query.desde || 0;
     desde = Number(desde);
 
-    Usuario.find({}, 'nombre email img role')
+    Vehiculo.find({})
         .skip(desde)
         .limit(5)
+        .populate('usuario', 'nombre email')
+        .populate('ruta')
         .exec(
 
-            (err, usuarios) => {
+            (err, vehiculos) => {
 
                 if (err) {
                     return response.status(500).json({
                         ok: false,
-                        mensaje: 'Error cargando usuarios!',
+                        mensaje: 'Error cargando vehiculos!',
                         errors: err
                     });
                 }
 
-                Usuario.count({}, (err, cuenta) => {
+                Vehiculo.count({}, (err, cuenta) => {
                     response.status(200).json({
                         ok: true,
-                        usuarios: usuarios,
+                        vehiculos: vehiculos,
                         total: cuenta
                     });
-
-                })
-
-
+                });
             });
 
 });
 
 // =========================================
-// Actualizar nuevo usuario
+// Actualizar vehiculo
 // =========================================
 
 app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
-    Usuario.findById(id, (err, usuario) => {
+    Vehiculo.findById(id, (err, vehiculo) => {
         if (err) {
             return response.status(500).json({
                 ok: false,
-                mensaje: 'Error al buscar usuario!',
+                mensaje: 'Error al buscar vehiculo!',
                 errors: err
             });
         }
 
-        if (!usuario) {
+        if (!vehiculo) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Usuario no existe!',
-                errors: { message: 'Usuario no encontrado!' }
+                mensaje: 'Vehiculo no existe!',
+                errors: { message: 'Vehiculo no encontrado!' }
             });
         }
 
-        usuario.nombre = body.nombre;
-        usuario.email = body.email;
-        usuario.role = body.role;
+        vehiculo.nombre = body.nombre;
+        vehiculo.usuario = request.usuario._id;
+        vehiculo.ruta = body.ruta;
 
-        usuario.save((err, usuarioUpdate) => {
+
+        vehiculo.save((err, vehiculoUpdate) => {
             if (err) {
                 return response.status(400).json({
                     ok: false,
-                    mensaje: 'Error al actualizar usuario!',
+                    mensaje: 'Error al actualizar vehiculo!',
                     errors: err
                 });
             }
 
-            usuarioUpdate.password = '**********';
-
             response.status(200).json({
                 ok: true,
-                usuario: usuarioUpdate
+                vehiculo: vehiculoUpdate
             });
         });
 
@@ -96,66 +92,63 @@ app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
 });
 
 // =========================================
-// Crear nuevo usuario
+// Crear nuevo vehiculo
 // =========================================
 
 app.post('/', mdAutenticacion.verificaToken, (request, response) => {
     var body = request.body;
 
-    var usuario = new Usuario({
+    var vehiculo = new Vehiculo({
         nombre: body.nombre,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        img: body.img,
-        role: body.role
+        usuario: request.usuario._id,
+        ruta: body.ruta
     });
 
-    usuario.save((err, newUsuario) => {
+    vehiculo.save((err, newVehiculo) => {
 
         if (err) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Error al crear usuario!',
+                mensaje: 'Error al crear vehiculo!',
                 errors: err
             });
         }
 
         response.status(201).json({
             ok: true,
-            usuario: newUsuario,
-            usuarioToken: request.usuario
+            vehiculo: newVehiculo,
         });
     });
 });
 
 // =========================================
-// Eliminar usuario
+// Eliminar vehiculo
 // =========================================
 
 app.delete('/:id', mdAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
 
-    Usuario.findByIdAndRemove(id, (err, usuarioDelete) => {
+    Vehiculo.findByIdAndRemove(id, (err, vehiculoDelete) => {
 
         if (err) {
             return response.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar usuario!',
+                mensaje: 'Error al borrar vehiculo!',
                 errors: err
             });
         }
 
-        if (!usuarioDelete) {
+        if (!vehiculoDelete) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Usuario no existe!',
-                errors: { message: 'Usuario no existe!' }
+                mensaje: 'Vehiculo no existe!',
+                errors: { message: 'Vehiculo no existe!' }
             });
         }
 
         response.status(200).json({
             ok: true,
-            usuario: usuarioDelete
+            vehiculo: vehiculoDelete
         });
 
     });
