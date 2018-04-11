@@ -19,7 +19,7 @@ var vehiculoRoutes = require('./routes/vehiculo');
 var rutaRoutes = require('./routes/ruta');
 var busquedaRoutes = require('./routes/busqueda');
 var uploadRoutes = require('./routes/upload');
-
+var imagenesdRoutes = require('./routes/imagenes');
 
 //Conexion a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) => {
@@ -29,12 +29,19 @@ mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) =>
 
 });
 
+//Server index config
+//var serveIndex = require('serve-index');
+//app.use(express.static(__dirname + '/'));
+//app.use('/uploads', serveIndex(__dirname + '/uploads'));
+
+
 //Rutas
 app.use('/usuario', usuarioRoutes);
 app.use('/vehiculo', vehiculoRoutes);
 app.use('/ruta', rutaRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/imagenes', imagenesdRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
