@@ -49,7 +49,7 @@ app.post('/google', async(request, response) => {
         });
     });
 
-    Usuario.findOne({ email: googleUser.email }, (err, usuarioBD) => {
+    Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
         if (err) {
             return response.status(500).json({
                 ok: false,
@@ -58,8 +58,8 @@ app.post('/google', async(request, response) => {
             });
         }
 
-        if (usuarioBD) {
-            if (usuarioBD.google === false) {
+        if (usuarioDB) {
+            if (usuarioDB.google === false) {
                 return response.status(400).json({
                     ok: false,
                     mensaje: 'Debes usar la autenticación normal!'
@@ -107,12 +107,6 @@ app.post('/google', async(request, response) => {
 
         }
     });
-
-    /*response.status(200).json({
-        ok: true,
-        mensaje: 'OK!',
-        googleUser: googleUser
-    });*/
 
 });
 
@@ -164,8 +158,6 @@ app.post('/', (request, response) => {
             id: usuarioDB._id
         });
     });
-
-
 
 });
 
