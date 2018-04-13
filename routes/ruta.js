@@ -40,6 +40,37 @@ app.get('/', (request, response, next) => {
             });
 });
 
+// ==========================================
+// Obtener Ruta por ID
+// ==========================================
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Ruta.findById(id)
+        .populate('usuario', 'nombre img email')
+        .exec((err, ruta) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar Ruta',
+                    errors: err
+                });
+            }
+            if (!ruta) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'La ruta con el id ' + id + 'no existe ',
+                    errors: {
+                        message: 'No existe una ruta con ese ID '
+                    }
+                });
+            }
+            res.status(200).json({
+                ok: true,
+                ruta: ruta
+            });
+        })
+});
+
 // =========================================
 // Actualizar ruta
 // =========================================
