@@ -42,12 +42,49 @@ app.get('/', (request, response, next) => {
 
 });
 
+// =========================================
+// Obtener vehiculo
+// =========================================
+
+app.get('/:id', (request, response) => {
+    var id = request.params.id;
+
+    Vehiculo.findById(id)
+        .populate('usuario', 'nombre email img')
+        .populate('ruta')
+        .exec((err, vehiculo) => {
+
+            if (err) {
+                return response.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar vehiculo!',
+                    errors: err
+                });
+            }
+
+            if (!vehiculo) {
+                return response.status(400).json({
+                    ok: false,
+                    mensaje: 'Vehiculo no existe!',
+                    errors: { message: 'Vehiculo no encontrado!' }
+                });
+            }
+
+            response.status(200).json({
+                ok: true,
+                vehiculo: vehiculo
+            });
+
+        });
+
+
+});
 
 // =========================================
 // Actualizar vehiculo
 // =========================================
 
-app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
+app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
@@ -96,7 +133,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
 // Crear nuevo vehiculo
 // =========================================
 
-app.post('/', mdAutenticacion.verificaToken, (request, response) => {
+app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var body = request.body;
 
     var vehiculo = new Vehiculo({
@@ -126,7 +163,7 @@ app.post('/', mdAutenticacion.verificaToken, (request, response) => {
 // Eliminar vehiculo
 // =========================================
 
-app.delete('/:id', mdAutenticacion.verificaToken, (request, response) => {
+app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
 
     Vehiculo.findByIdAndRemove(id, (err, vehiculoDelete) => {

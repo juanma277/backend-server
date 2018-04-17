@@ -25,3 +25,48 @@ exports.verificaToken = function(request, response, next) {
     });
 
 }
+
+
+
+// =========================================
+// Verificar Admin
+// =========================================
+exports.verificaADMIN_ROLE = function(request, response, next) {
+
+    var usuario = request.usuario;
+
+    if (usuario.role === 'ADMIN_ROLE') {
+        next();
+        return;
+    } else {
+        return response.status(401).json({
+            ok: false,
+            mensaje: 'ERROR: USUARIO NO AUTORIZADO',
+            errors: { message: 'ERROR: USUARIO NO AUTORIZADO' }
+        });
+    }
+
+}
+
+
+
+// =========================================
+// Permitir edición de datos - Mismo Usuario
+// =========================================
+exports.verificaADMIN_ROLE_MISMO_USUARIO = function(request, response, next) {
+
+    var usuario = request.usuario;
+    var id = request.params.id;
+
+    if (usuario.role === 'ADMIN_ROLE' || usuario._id === id) {
+        next();
+        return;
+    } else {
+        return response.status(401).json({
+            ok: false,
+            mensaje: 'ERROR: USUARIO NO AUTORIZADO',
+            errors: { message: 'ERROR: USUARIO NO AUTORIZADO' }
+        });
+    }
+
+}

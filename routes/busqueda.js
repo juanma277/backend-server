@@ -76,7 +76,7 @@ function buscarRutas(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
         Ruta.find({ nombre: regex })
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .exec((err, rutas) => {
                 if (err) {
                     reject('Error de carga', err);
@@ -91,7 +91,7 @@ function buscarVehiculos(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
         Vehiculo.find({ nombre: regex })
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .populate('ruta')
             .exec((err, vehiculos) => {
                 if (err) {
@@ -106,7 +106,7 @@ function buscarVehiculos(busqueda, regex) {
 function buscarUsuarios(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
-        Usuario.find({}, 'nombre email role')
+        Usuario.find({}, 'nombre email role img')
             .or([{ 'nombre': regex }, { 'email': regex }])
             .exec((err, usuarios) => {
 

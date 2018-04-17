@@ -75,7 +75,7 @@ app.get('/:id', (req, res) => {
 // Actualizar ruta
 // =========================================
 
-app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
+app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
@@ -122,7 +122,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
 // Crear nueva ruta
 // =========================================
 
-app.post('/', mdAutenticacion.verificaToken, (request, response) => {
+app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var body = request.body;
 
     var ruta = new Ruta({
@@ -151,7 +151,7 @@ app.post('/', mdAutenticacion.verificaToken, (request, response) => {
 // Eliminar ruta
 // =========================================
 
-app.delete('/:id', mdAutenticacion.verificaToken, (request, response) => {
+app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
 
     Ruta.findByIdAndRemove(id, (err, rutaDelete) => {

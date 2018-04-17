@@ -71,7 +71,8 @@ app.post('/google', async(request, response) => {
                     ok: true,
                     usuario: usuarioDB,
                     token: token,
-                    id: usuarioDB._id
+                    id: usuarioDB._id,
+                    menu: obtenerMenu(usuarioDB.role)
                 });
             }
         } else {
@@ -99,7 +100,9 @@ app.post('/google', async(request, response) => {
                     ok: true,
                     usuario: usuarioDB,
                     token: token,
-                    id: usuarioDB._id
+                    id: usuarioDB._id,
+                    menu: obtenerMenu(usuarioDB.role)
+
                 });
 
             })
@@ -155,11 +158,50 @@ app.post('/', (request, response) => {
             ok: true,
             usuario: usuarioDB,
             token: token,
-            id: usuarioDB._id
+            id: usuarioDB._id,
+            menu: obtenerMenu(usuarioDB.role)
+
         });
     });
 
 });
+
+// =========================================
+// Obtener Menú
+// =========================================
+
+function obtenerMenu(ROLE) {
+
+    var menu = [{
+            titulo: 'Principal',
+            icono: 'mdi mdi-gauge',
+            submenu: [
+                { titulo: 'Dasboard', url: '/dashboard' },
+                { titulo: 'ProgressBar', url: '/progress' },
+                { titulo: 'Graficas', url: '/graficas1' },
+                { titulo: 'Promesas', url: '/promesas' },
+                { titulo: 'Rxjs', url: '/Rxjs' }
+            ]
+        },
+
+    ];
+
+    if (ROLE === 'ADMIN_ROLE') {
+        menu.push({
+
+            titulo: 'Mantenimiento',
+            icono: 'mdi mdi-folder-lock-open',
+            submenu: [
+                { titulo: 'Usuarios', url: '/usuarios' },
+                { titulo: 'Vehiculos', url: '/vehiculos' },
+                { titulo: 'Rutas', url: '/rutas' }
+            ]
+        });
+    }
+
+    return menu;
+
+}
 
 
 module.exports = app;
