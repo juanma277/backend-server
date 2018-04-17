@@ -13,6 +13,25 @@ const client = new OAuth2Client(CLIENT_ID);
 //Modelo
 var Usuario = require('../models/usuario');
 
+var mdAutenticacion = require('../middlewares/autenticacion');
+
+
+// =========================================
+// Renovar Token
+// =========================================
+
+app.get('/renuevaToken', mdAutenticacion.verificaToken, (request, response) => {
+
+    var token = jwt.sign({ usuario: request.usuario }, SEED, { expiresIn: 14400 });
+
+    response.status(500).json({
+        ok: true,
+        token: token
+    });
+});
+
+
+
 
 // =========================================
 // Metodo de Login Google
