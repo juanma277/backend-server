@@ -198,6 +198,7 @@ function obtenerMenu(ROLE) {
                 { titulo: 'Dasboard', url: '/dashboard' },
                 { titulo: 'ProgressBar', url: '/progress' },
                 { titulo: 'Graficas', url: '/graficas1' },
+                { titulo: 'Chat', url: '/chat' },
                 { titulo: 'Promesas', url: '/promesas' },
                 { titulo: 'Rxjs', url: '/Rxjs' }
             ]

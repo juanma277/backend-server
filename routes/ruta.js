@@ -6,7 +6,7 @@ var app = express();
 var Ruta = require('../models/ruta');
 
 // =========================================
-// Obtener todos los rutas
+// Obtener todas los rutas
 // =========================================
 
 app.get('/', (request, response, next) => {

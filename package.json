@@ -1,23 +1,26 @@
 {
-  "name": "backend-server",
-  "version": "1.0.0",
-  "description": "Servidor backend jectapp",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Juan Manuel Valderrama",
-  "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.18.2",
-    "express": "^4.16.3",
-    "express-fileupload": "^0.4.0",
-    "google-auth-library": "^1.4.0",
-    "jsonwebtoken": "^8.2.1",
-    "mongoose": "^5.0.14",
-    "mongoose-unique-validator": "^2.0.0",
-    "serve-index": "^1.9.1"
-  }
+    "name": "backend-server",
+    "version": "1.0.0",
+    "description": "Servidor backend jectapp",
+    "main": "index.js",
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Juan Manuel Valderrama",
+    "license": "ISC",
+    "dependencies": {
+        "@types/socket.io-client": "^1.4.32",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.18.2",
+        "express": "^4.16.3",
+        "express-fileupload": "^0.4.0",
+        "google-auth-library": "^1.4.0",
+        "jsonwebtoken": "^8.2.1",
+        "mongoose": "^5.0.14",
+        "mongoose-unique-validator": "^2.0.0",
+        "serve-index": "^1.9.1",
+        "socket.io": "^2.1.0",
+        "socket.io-client": "^2.1.0"
+    }
 }

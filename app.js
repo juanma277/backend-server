@@ -1,10 +1,11 @@
 // Requires
 var express = require('express');
+var path = require('path');
+var app = express();
+var server = require('http').Server(app);
+
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-
-//Inicializar variables
-var app = express();
 
 //CORS
 app.use(function(req, res, next) {
@@ -14,10 +15,17 @@ app.use(function(req, res, next) {
     next();
 });
 
+//SOCKET IO
+module.exports.io = require('socket.io')(server);
+require('./sockets/sokect');
+
 //Body Parser
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(express.static('cliente'));
+app.use(express.static(path.join(__dirname, "public")));
 
 //Importar rutas
 var appRoutes = require('./routes/app');
@@ -28,6 +36,7 @@ var rutaRoutes = require('./routes/ruta');
 var busquedaRoutes = require('./routes/busqueda');
 var uploadRoutes = require('./routes/upload');
 var imagenesdRoutes = require('./routes/imagenes');
+var socketRoutes = require('./routes/sockets');
 
 //Conexion a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) => {
@@ -37,12 +46,6 @@ mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) =>
 
 });
 
-//Server index config
-//var serveIndex = require('serve-index');
-//app.use(express.static(__dirname + '/'));
-//app.use('/uploads', serveIndex(__dirname + '/uploads'));
-
-
 //Rutas
 app.use('/usuario', usuarioRoutes);
 app.use('/vehiculo', vehiculoRoutes);
@@ -50,10 +53,11 @@ app.use('/ruta', rutaRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/imagenes', imagenesdRoutes);
+app.use('/socket.io', socketRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
 //Escuchar peticiones
-app.listen(3000, () => {
+server.listen(3000, () => {
     console.log('Express server puerto 3000: \x1b[32m%s\x1b[0m', 'online');
 });
