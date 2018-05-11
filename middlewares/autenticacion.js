@@ -35,7 +35,7 @@ exports.verificaADMIN_ROLE = function(request, response, next) {
 
     var usuario = request.usuario;
 
-    if (usuario.role === 'ADMIN_ROLE') {
+    if (usuario.role === 'ADMIN_ROLE' || usuario.role === 'SUPER_ROLE') {
         next();
         return;
     } else {
@@ -58,7 +58,7 @@ exports.verificaADMIN_ROLE_MISMO_USUARIO = function(request, response, next) {
     var usuario = request.usuario;
     var id = request.params.id;
 
-    if (usuario.role === 'ADMIN_ROLE' || usuario._id === id) {
+    if (usuario.role === 'ADMIN_ROLE' || usuario._id === id || usuario.role === 'SUPER_ROLE') {
         next();
         return;
     } else {

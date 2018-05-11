@@ -96,7 +96,7 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_RO
 });
 
 // =========================================
-// Crear nuevo usuario
+// Crear usuario
 // =========================================
 
 app.post('/', (request, response) => {
@@ -156,6 +156,52 @@ app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN
         response.status(200).json({
             ok: true,
             usuario: usuarioDelete
+        });
+
+    });
+});
+
+// =========================================
+// Reset Password Usuario
+// =========================================
+
+app.get('/reset/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
+    var id = request.params.id;
+
+    Usuario.findById(id, (err, usuario) => {
+        if (err) {
+            return response.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario!',
+                errors: err
+            });
+        }
+
+        if (!usuario) {
+            return response.status(400).json({
+                ok: false,
+                mensaje: 'Usuario no existe!',
+                errors: { message: 'Usuario no encontrado!' }
+            });
+        }
+
+        usuario.password = bcrypt.hashSync('123456*', 10);
+
+        usuario.save((err, usuarioUpdate) => {
+            if (err) {
+                return response.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar usuario!',
+                    errors: err
+                });
+            }
+
+            usuarioUpdate.password = '**********';
+
+            response.status(200).json({
+                ok: true,
+                usuario: usuarioUpdate
+            });
         });
 
     });

@@ -37,6 +37,9 @@ var busquedaRoutes = require('./routes/busqueda');
 var uploadRoutes = require('./routes/upload');
 var imagenesdRoutes = require('./routes/imagenes');
 var socketRoutes = require('./routes/sockets');
+var barrioRoutes = require('./routes/barrio');
+var empresaRoutes = require('./routes/empresa');
+
 
 //Conexion a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) => {
@@ -54,6 +57,8 @@ app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/imagenes', imagenesdRoutes);
 app.use('/socket.io', socketRoutes);
+app.use('/barrio', barrioRoutes);
+app.use('/empresa', empresaRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 

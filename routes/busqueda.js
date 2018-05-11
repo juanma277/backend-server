@@ -5,6 +5,8 @@ var app = express();
 var Ruta = require('../models/ruta');
 var Vehiculo = require('../models/vehiculo');
 var Usuario = require('../models/usuario');
+var Barrio = require('../models/barrio');
+
 
 // ================================================
 // Busqueda por colección
@@ -29,6 +31,10 @@ app.get('/coleccion/:tabla/:busqueda', (request, response) => {
 
         case 'vehiculos':
             promesa = buscarVehiculos(busqueda, regex);
+            break;
+
+        case 'barrios':
+            promesa = buscarBarrios(busqueda, regex);
             break;
 
         default:
@@ -59,13 +65,14 @@ app.get('/todo/:busqueda', (request, response, next) => {
     var regex = new RegExp(busqueda, 'i');
 
 
-    Promise.all([buscarRutas(busqueda, regex), buscarVehiculos(busqueda, regex), buscarUsuarios(busqueda, regex)])
+    Promise.all([buscarRutas(busqueda, regex), buscarVehiculos(busqueda, regex), buscarUsuarios(busqueda, regex), buscarBarrios(busqueda, regex)])
         .then(respuestas => {
             response.status(200).json({
                 ok: true,
                 rutas: respuestas[0],
                 vehiculos: respuestas[1],
-                usuarios: respuestas[2]
+                usuarios: respuestas[2],
+                barrios: respuestas[3]
             });
 
         });
@@ -114,6 +121,23 @@ function buscarUsuarios(busqueda, regex) {
                     reject('Error de carga', err);
                 } else {
                     resolve(usuarios);
+                }
+
+            })
+    })
+}
+
+function buscarBarrios(busqueda, regex) {
+    return new Promise((resolve, reject) => {
+
+        Barrio.find({}, 'nombre lat lng')
+            .or([{ 'nombre': regex }])
+            .exec((err, barrios) => {
+
+                if (err) {
+                    reject('Error de carga', err);
+                } else {
+                    resolve(barrios);
                 }
 
             })

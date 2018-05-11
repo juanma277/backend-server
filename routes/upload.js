@@ -8,6 +8,8 @@ var app = express();
 var Ruta = require('../models/ruta');
 var Vehiculo = require('../models/vehiculo');
 var Usuario = require('../models/usuario');
+var Empresa = require('../models/empresa');
+
 
 // default options
 app.use(fileUpload());
@@ -17,9 +19,10 @@ app.put('/:tipo/:id', (request, response, next) => {
 
     var tipo = request.params.tipo;
     var id = request.params.id;
+    var img = request.query.img;
 
     //Tipos de coleccion Validos: Vehiculos - Rutas - Usuarios
-    var tiposValidos = ['Vehiculos', 'Rutas', 'Usuarios'];
+    var tiposValidos = ['Vehiculos', 'Rutas', 'Usuarios', 'Empresas'];
 
     if (tiposValidos.indexOf(tipo) < 0) {
         return response.status(400).json({
@@ -70,12 +73,12 @@ app.put('/:tipo/:id', (request, response, next) => {
             });
         }
 
-        subirPorTipo(tipo, id, nombreArchivo, response);
+        subirPorTipo(tipo, id, nombreArchivo, response, img);
     });
 });
 
 
-function subirPorTipo(tipo, id, nombreArchivo, response) {
+function subirPorTipo(tipo, id, nombreArchivo, response, img) {
 
     if (tipo === 'Usuarios') {
 
@@ -171,6 +174,62 @@ function subirPorTipo(tipo, id, nombreArchivo, response) {
 
     }
 
+    if (tipo === 'Empresas') {
+
+        Empresa.findById(id, (err, empresa) => {
+
+            if (!empresa) {
+                return response.status(400).json({
+                    ok: true,
+                    mensaje: 'Empresa no existe',
+                    errors: { message: 'Empresa no existe' }
+                });
+            }
+
+            switch (img) {
+                case '1':
+                    var pathOld = './uploads/empresas/' + empresa.img1;
+                    empresa.img1 = nombreArchivo;
+                    break;
+
+                case '2':
+                    var pathOld = './uploads/empresas/' + empresa.img2;
+                    empresa.img2 = nombreArchivo;
+                    break;
+
+                case '3':
+                    var pathOld = './uploads/empresas/' + empresa.img3;
+                    empresa.img3 = nombreArchivo;
+                    break;
+
+                case '4':
+                    var pathOld = './uploads/empresas/' + empresa.img4;
+                    empresa.img4 = nombreArchivo;
+
+                default:
+                    break;
+            }
+
+
+
+            //Borrar imagen anterior <si existe>.
+            if (filesystem.existsSync(pathOld)) {
+                filesystem.unlink(pathOld);
+            }
+
+
+
+            empresa.save((err, empresaUpdate) => {
+
+                return response.status(200).json({
+                    ok: true,
+                    mensaje: 'Imagen de empresa actualizada',
+                    empresa: empresaUpdate
+                });
+            });
+        });
+
+    }
 
 }
 

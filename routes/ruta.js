@@ -40,6 +40,41 @@ app.get('/', (request, response, next) => {
             });
 });
 
+// =========================================
+// Obtener todas las rutas por coordenadas
+// =========================================
+
+app.get('/:lat_origen/:lng_origen/:lat_destino/:lng_destino', (request, response, next) => {
+
+    var lat_origen = request.params.lat_origen;
+    var lng_origen = request.params.lng_origen;
+    var lat_destino = request.params.lat_destino;
+    var lng_destino = request.params.lng_destino;
+
+    Ruta.find({ lat_origen: lat_origen, lng_origen: lng_origen, lat_destino: lat_destino, lng_destino: lng_destino })
+        .populate('empresa', 'nombre')
+        .exec(
+
+            (err, rutas) => {
+
+                if (err) {
+                    return response.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando rutas!',
+                        errors: err
+                    });
+                }
+
+                Ruta.count({ lat_origen: lat_origen, lng_origen: lng_origen, lat_destino: lat_destino, lng_destino: lng_destino }, (err, cuenta) => {
+                    response.status(200).json({
+                        ok: true,
+                        rutas: rutas,
+                        total: cuenta
+                    });
+                });
+            });
+});
+
 // ==========================================
 // Obtener Ruta por ID
 // ==========================================
@@ -47,6 +82,7 @@ app.get('/:id', (req, res) => {
     var id = req.params.id;
     Ruta.findById(id)
         .populate('usuario', 'nombre img email')
+        .populate('empresa', 'nombre tipo informacion')
         .exec((err, ruta) => {
             if (err) {
                 return res.status(500).json({
@@ -119,7 +155,7 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_RO
 });
 
 // =========================================
-// Crear nueva ruta
+// Crear Ruta
 // =========================================
 
 app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
@@ -127,7 +163,14 @@ app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE
 
     var ruta = new Ruta({
         nombre: body.nombre,
-        usuario: request.usuario._id
+        usuario: request.usuario._id,
+        empresa: body.empresa,
+        lat_origen: 45.56,
+        lng_origen: -45.63,
+        lat_destino: -56.36,
+        lng_destino: -74.63,
+
+
     });
 
     ruta.save((err, newRuta) => {

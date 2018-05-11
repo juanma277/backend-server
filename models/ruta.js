@@ -1,10 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+require('./empresa')
+
 var rutaSchema = new Schema({
     nombre: { type: String, required: [true, 'El nombre es necesario'] },
     img: { type: String, required: false },
-    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true }
+    lat_origen: { type: Number, required: [true, 'La latitud es necesario'] },
+    lng_origen: { type: Number, required: [true, 'La longitud es necesario'] },
+    lat_destino: { type: Number, required: [true, 'La latitud es necesario'] },
+    lng_destino: { type: Number, required: [true, 'La longitud es necesario'] },
+    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    empresa: {
+        type: Schema.Types.ObjectId,
+        ref: 'Empresa',
+        required: [true, 'El id de la empresa es obligatorio']
+    },
 }, { collection: 'rutas' });
 
 module.exports = mongoose.model('Ruta', rutaSchema);

@@ -196,11 +196,11 @@ function obtenerMenu(ROLE) {
             icono: 'mdi mdi-gauge',
             submenu: [
                 { titulo: 'Dasboard', url: '/dashboard' },
-                { titulo: 'ProgressBar', url: '/progress' },
+                //{ titulo: 'ProgressBar', url: '/progress' },
                 { titulo: 'Graficas', url: '/graficas1' },
                 { titulo: 'Chat', url: '/chat' },
-                { titulo: 'Promesas', url: '/promesas' },
-                { titulo: 'Rxjs', url: '/Rxjs' }
+                //{ titulo: 'Promesas', url: '/promesas' },
+                //{ titulo: 'Rxjs', url: '/Rxjs' }
             ]
         },
 
@@ -210,11 +210,50 @@ function obtenerMenu(ROLE) {
         menu.push({
 
             titulo: 'Mantenimiento',
-            icono: 'mdi mdi-folder-lock-open',
+            icono: 'mdi mdi-settings',
             submenu: [
                 { titulo: 'Usuarios', url: '/usuarios' },
                 { titulo: 'Vehiculos', url: '/vehiculos' },
                 { titulo: 'Rutas', url: '/rutas' }
+            ]
+        });
+    }
+
+
+    if (ROLE === 'BUSINESS_ROLE') {
+        menu.push({
+
+            titulo: 'Datos Empresa',
+            icono: 'mdi mdi-cart',
+            submenu: [
+                { titulo: 'Empresa', url: '/empresa' }
+            ]
+        });
+    }
+
+
+    if (ROLE === 'USER_ROLE') {
+        menu.push({
+
+            titulo: 'Datos Vehiculo',
+            icono: 'mdi mdi-car',
+            submenu: [
+                { titulo: 'Vehiculo', url: '/vehiculo' }
+            ]
+        });
+    }
+
+    if (ROLE === 'SUPER_ROLE') {
+        menu.push({
+
+            titulo: 'Super Usuario',
+            icono: 'mdi mdi-lock',
+            submenu: [
+                { titulo: 'Usuarios', url: '/usuarios' },
+                { titulo: 'Rutas', url: '/rutas' },
+                { titulo: 'Vehiculos', url: '/vehiculos' },
+                { titulo: 'Barrios', url: '/barrios' },
+                { titulo: 'Empresas', url: '/empresas' }
             ]
         });
     }
