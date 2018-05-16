@@ -22,7 +22,7 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 
 app.get('/renuevaToken', mdAutenticacion.verificaToken, (request, response) => {
 
-    var token = jwt.sign({ usuario: request.usuario }, SEED, { expiresIn: 14400 });
+    var token = jwt.sign({ usuario: request.usuario }, SEED, { expiresIn: 500000 });
 
     response.status(500).json({
         ok: true,
@@ -84,7 +84,7 @@ app.post('/google', async(request, response) => {
                     mensaje: 'Debes usar la autenticación normal!'
                 });
             } else {
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 });
+                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 500000 });
 
                 response.status(200).json({
                     ok: true,
@@ -113,7 +113,7 @@ app.post('/google', async(request, response) => {
                     });
                 }
 
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 });
+                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 500000 });
 
                 response.status(200).json({
                     ok: true,
@@ -171,7 +171,7 @@ app.post('/', (request, response) => {
         //CREAR TOKEN
         usuarioDB.password = '**********';
 
-        var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 });
+        var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 500000 });
 
         response.status(200).json({
             ok: true,
@@ -253,7 +253,9 @@ function obtenerMenu(ROLE) {
                 { titulo: 'Rutas', url: '/rutas' },
                 { titulo: 'Vehiculos', url: '/vehiculos' },
                 { titulo: 'Barrios', url: '/barrios' },
-                { titulo: 'Empresas', url: '/empresas' }
+                { titulo: 'Empresas', url: '/empresas' },
+                { titulo: 'Marcadores', url: '/marcadores' }
+
             ]
         });
     }

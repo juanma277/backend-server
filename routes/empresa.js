@@ -18,6 +18,39 @@ app.get('/', (request, response, next) => {
 
     Empresa.find({})
         .populate('usuario', 'nombre email')
+        .skip(desde)
+        .limit(5)
+        .exec(
+
+            (err, empresas) => {
+
+                if (err) {
+                    return response.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando empresas!',
+                        errors: err
+                    });
+                }
+
+                Empresa.count({}, (err, cuenta) => {
+                    response.status(200).json({
+                        ok: true,
+                        empresas: empresas,
+                        total: cuenta
+                    });
+                });
+            });
+
+});
+
+// =========================================
+// Obtener todas las empresas
+// =========================================
+
+app.get('/todo', (request, response, next) => {
+
+    Empresa.find({})
+        .populate('usuario', 'nombre email')
         .exec(
 
             (err, empresas) => {
@@ -152,6 +185,7 @@ app.get('/obtener/:id', (request, response) => {
 // =========================================
 
 app.put('/:id', [mdAutenticacion.verificaToken /*mdAutenticacion.verificaADMIN_ROLE*/ ], (request, response) => {
+
     var id = request.params.id;
     var body = request.body;
 
@@ -172,9 +206,25 @@ app.put('/:id', [mdAutenticacion.verificaToken /*mdAutenticacion.verificaADMIN_R
             });
         }
 
+
+
         empresa.nombre = body.nombre;
         empresa.informacion = body.informacion;
         empresa.descripcion = body.descripcion;
+
+        if (body.tipo) {
+            empresa.tipo = body.tipo;
+            if (body.tipo === 'TRANSPORT') {
+                empresa.icono = 'transporte.png';
+            } else {
+                empresa.icono = 'tienda.png';
+            }
+        }
+
+        if (body.usuario) {
+            empresa.usuario = body.usuario;
+        }
+
 
 
         empresa.save((err, empresaUpdate) => {
@@ -254,12 +304,20 @@ app.get('/:id/:lat/:lng', [mdAutenticacion.verificaToken /*mdAutenticacion.verif
 
 app.post('/', [mdAutenticacion.verificaToken, /*mdAutenticacion.verificaADMIN_ROLE*/ ], (request, response) => {
     var body = request.body;
+    var icono;
+
+    if (body.tipo === 'TRANSPORT') {
+        icono = 'transporte.png';
+    } else {
+        icono = 'tienda.png';
+    }
 
     var empresa = new Empresa({
         nombre: body.nombre,
         tipo: body.tipo,
         informacion: body.informacion,
         descripcion: body.descripcion,
+        icono: icono,
         lat: body.lat,
         lng: body.lng,
         usuario: body.usuario
@@ -289,27 +347,27 @@ app.post('/', [mdAutenticacion.verificaToken, /*mdAutenticacion.verificaADMIN_RO
 app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
 
-    Vehiculo.findByIdAndRemove(id, (err, vehiculoDelete) => {
+    Empresa.findByIdAndRemove(id, (err, empresaDelete) => {
 
         if (err) {
             return response.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar vehiculo!',
+                mensaje: 'Error al borrar empresa!',
                 errors: err
             });
         }
 
-        if (!vehiculoDelete) {
+        if (!empresaDelete) {
             return response.status(400).json({
                 ok: false,
-                mensaje: 'Vehiculo no existe!',
-                errors: { message: 'Vehiculo no existe!' }
+                mensaje: 'Empresa no existe!',
+                errors: { message: 'Empresa no existe!' }
             });
         }
 
         response.status(200).json({
             ok: true,
-            vehiculo: vehiculoDelete
+            empresa: empresaDelete
         });
 
     });

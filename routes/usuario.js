@@ -8,7 +8,7 @@ var app = express();
 var Usuario = require('../models/usuario');
 
 // =========================================
-// Obtener todos los usuarios
+// Obtener todos los usuarios - Paginados
 // =========================================
 
 app.get('/', (request, response, next) => {
@@ -19,6 +19,40 @@ app.get('/', (request, response, next) => {
     Usuario.find({}, 'nombre email img role google')
         .skip(desde)
         .limit(5)
+        .exec(
+
+            (err, usuarios) => {
+
+                if (err) {
+                    return response.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando usuarios!',
+                        errors: err
+                    });
+                }
+
+                Usuario.count({}, (err, cuenta) => {
+                    response.status(200).json({
+                        ok: true,
+                        usuarios: usuarios,
+                        total: cuenta
+                    });
+
+                })
+
+
+            });
+
+});
+
+// =========================================
+// Obtener todos los usuarios
+// =========================================
+
+app.get('/all', (request, response, next) => {
+
+
+    Usuario.find({}, 'nombre email img role google')
         .exec(
 
             (err, usuarios) => {

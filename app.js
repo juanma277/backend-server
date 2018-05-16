@@ -39,7 +39,7 @@ var imagenesdRoutes = require('./routes/imagenes');
 var socketRoutes = require('./routes/sockets');
 var barrioRoutes = require('./routes/barrio');
 var empresaRoutes = require('./routes/empresa');
-
+var marcadoresRoutes = require('./routes/marcador');
 
 //Conexion a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/jectappDB', (err, res) => {
@@ -59,6 +59,7 @@ app.use('/imagenes', imagenesdRoutes);
 app.use('/socket.io', socketRoutes);
 app.use('/barrio', barrioRoutes);
 app.use('/empresa', empresaRoutes);
+app.use('/marcador', marcadoresRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 

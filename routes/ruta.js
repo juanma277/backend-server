@@ -155,6 +155,55 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_RO
 });
 
 // =========================================
+// Actualizar Coordenadas de Ruta
+// =========================================
+
+app.put('/coordenadas/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
+    var id = request.params.id;
+    var body = request.body;
+
+    Ruta.findById(id, (err, ruta) => {
+        if (err) {
+            return response.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar ruta!',
+                errors: err
+            });
+        }
+
+        if (!ruta) {
+            return response.status(400).json({
+                ok: false,
+                mensaje: 'Ruta no existe!',
+                errors: { message: 'Ruta no encontrado!' }
+            });
+        }
+
+        ruta.lat_origen = body.lat_origen;
+        ruta.lng_origen = body.lng_origen;
+        ruta.lat_destino = body.lat_destino;
+        ruta.lng_destino = body.lng_destino;
+
+        ruta.save((err, rutaUpdate) => {
+            if (err) {
+                return response.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar ruta!',
+                    errors: err
+                });
+            }
+
+            response.status(200).json({
+                ok: true,
+                ruta: rutaUpdate
+            });
+        });
+
+    });
+
+});
+
+// =========================================
 // Crear Ruta
 // =========================================
 

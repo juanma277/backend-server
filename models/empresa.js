@@ -6,6 +6,7 @@ var empresaSchema = new Schema({
     tipo: { type: String, required: [true, 'El tipo es necesario'] },
     informacion: { type: String, required: [true, 'La informacion es necesario'] },
     descripcion: { type: String, required: [true, 'La descripcion es necesario'] },
+    icono: { type: String, required: [true, 'El icono es necesario'] },
     img1: { type: String, required: false },
     img2: { type: String, required: false },
     img3: { type: String, required: false },
