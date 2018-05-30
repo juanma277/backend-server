@@ -112,6 +112,7 @@ app.get('/:id', (req, res) => {
 // =========================================
 
 app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
+    
     var id = request.params.id;
     var body = request.body;
 
@@ -130,11 +131,12 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_RO
                 mensaje: 'Ruta no existe!',
                 errors: { message: 'Ruta no encontrado!' }
             });
-        }
+        } 
 
         ruta.nombre = body.nombre;
-        ruta.usuario = request.usuario._id;
-
+        ruta.barrios = body.barrios;
+        ruta.empresa = body.empresa;
+        
         ruta.save((err, rutaUpdate) => {
             if (err) {
                 return response.status(400).json({
@@ -212,14 +214,12 @@ app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE
 
     var ruta = new Ruta({
         nombre: body.nombre,
-        usuario: request.usuario._id,
         empresa: body.empresa,
+        barrios: body.barrios,        
         lat_origen: 45.56,
         lng_origen: -45.63,
         lat_destino: -56.36,
-        lng_destino: -74.63,
-
-
+        lng_destino: -74.63
     });
 
     ruta.save((err, newRuta) => {
