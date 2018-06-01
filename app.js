@@ -16,8 +16,8 @@ app.use(function(req, res, next) {
 });
 
 //SOCKET IO
-module.exports.io = require('socket.io')(server);
-require('./sockets/sokect');
+//module.exports.io = require('socket.io')(server);
+//require('./sockets/sokect');
 
 //Body Parser
 // parse application/x-www-form-urlencoded

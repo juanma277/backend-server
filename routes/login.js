@@ -197,8 +197,8 @@ function obtenerMenu(ROLE) {
             submenu: [
                 { titulo: 'Dasboard', url: '/dashboard' },
                 //{ titulo: 'ProgressBar', url: '/progress' },
-                { titulo: 'Graficas', url: '/graficas1' },
-                { titulo: 'Chat', url: '/chat' },
+                //{ titulo: 'Graficas', url: '/graficas1' },
+                //{ titulo: 'Chat', url: '/chat' },
                 //{ titulo: 'Promesas', url: '/promesas' },
                 //{ titulo: 'Rxjs', url: '/Rxjs' }
             ]
@@ -263,6 +263,5 @@ function obtenerMenu(ROLE) {
     return menu;
 
 }
-
 
 module.exports = app;

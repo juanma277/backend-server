@@ -133,6 +133,8 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_RO
 
         marcador.nombre = body.nombre;
         marcador.icono = body.icono;
+        marcador.descripcion = body.descripcion;
+        
 
         if (body.lat) {
             marcador.lat = body.lat;
@@ -169,6 +171,7 @@ app.post('/', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE
 
     var marcador = new Marcador({
         nombre: body.nombre,
+        descripcion: body.descripcion,
         icono: body.icono,
         lat: body.lat,
         lng: body.lng,

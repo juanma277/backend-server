@@ -11,7 +11,7 @@ var rutaSchema = new Schema({
     lat_destino: { type: Number, required: [true, 'La latitud es necesario'] },
     lng_destino: { type: Number, required: [true, 'La longitud es necesario'] },
     barrios: { type: String, required: [true, 'Debe ingresar por lo menos un barrio'] },    
-    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: false },
     empresa: {
         type: Schema.Types.ObjectId,
         ref: 'Empresa',

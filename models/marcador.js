@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var marcadorSchema = new Schema({
     nombre: { type: String, required: [true, 'El nombre es necesario'] },
     icono: { type: String, required: [true, 'El icono es necesario'] },
+    descripcion: { type: String, required: [true, 'La descripcion es necesario'] },    
     lat: { type: Number, required: true, default: '2.446112' },
     lng: { type: Number, required: true, default: '-76.6060556' },
     img1: { type: String, required: false },
