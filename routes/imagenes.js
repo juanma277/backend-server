@@ -22,5 +22,4 @@ app.get('/:tipo/:img', (request, response, next) => {
     }
 });
 
-
 module.exports = app;

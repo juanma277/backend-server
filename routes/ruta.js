@@ -40,6 +40,38 @@ app.get('/', (request, response, next) => {
             });
 });
 
+
+// =========================================
+// Obtener todas los rutas
+// =========================================
+
+app.get('/All', (request, response, next) => {
+
+    Ruta.find({})
+        .populate('usuario', 'nombre email')
+        .populate('empresa', 'nombre tipo')        
+        .exec(
+
+            (err, rutas) => {
+
+                if (err) {
+                    return response.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando rutas!',
+                        errors: err
+                    });
+                }
+
+                Ruta.count({}, (err, cuenta) => {
+                    response.status(200).json({
+                        ok: true,
+                        rutas: rutas,
+                        total: cuenta
+                    });
+                });
+            });
+});
+
 // =========================================
 // Obtener todas las rutas por coordenadas
 // =========================================

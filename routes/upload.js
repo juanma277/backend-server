@@ -62,7 +62,7 @@ app.put('/:tipo/:id', (request, response, next) => {
     var nombreArchivo = `${id}-${ new Date().getMilliseconds()}.${tipoArchivo}`;
 
     //Mover archivo del temporal a un PATH
-    var path = `./uploads/${tipo}/${nombreArchivo}`;
+    var path = `./Uploads/${tipo}/${nombreArchivo}`;
 
     archivo.mv(path, err => {
 

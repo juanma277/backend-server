@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-require('./empresa')
+require('./empresa');
+require('./usuario')
+
 
 var rutaSchema = new Schema({
     nombre: { type: String, required: [true, 'El nombre es necesario'] },
