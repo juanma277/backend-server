@@ -48,7 +48,7 @@ app.put('/:tipo/:id', (request, response, next) => {
     var tipoArchivo = archivoSeparado[archivoSeparado.length - 1];
 
     //Extensiones permitidas
-    var extensionesPermitidas = ['png', 'jpg', 'gif', 'jpeg'];
+    var extensionesPermitidas = ['png', 'jpg', 'gif', 'jpeg','PNG', 'JPG', 'GIF', 'JPEG']; // agregar extensiones en may򳣵las
 
     if (extensionesPermitidas.indexOf(tipoArchivo) < 0) {
         return response.status(400).json({
@@ -62,7 +62,7 @@ app.put('/:tipo/:id', (request, response, next) => {
     var nombreArchivo = `${id}-${ new Date().getMilliseconds()}.${tipoArchivo}`;
 
     //Mover archivo del temporal a un PATH
-    var path = `./Uploads/${tipo}/${nombreArchivo}`;
+    var path = `./uploads/${tipo.toLowerCase()}/${nombreArchivo}`; //Cambio se crea path con carpeta en minusculas
 
     archivo.mv(path, err => {
 
@@ -96,13 +96,19 @@ function subirPorTipo(tipo, id, nombreArchivo, response, img) {
 
             //Borrar imagen anterior <si existe>.
             if (filesystem.existsSync(pathOld)) {
-                filesystem.unlink(pathOld);
+                try{
+              	  filesystem.unlink(pathOld);
+		}catch(err){
+		  console.log(err);	
+		}
+
             }
 
             usuario.img = nombreArchivo;
             usuario.save((err, usuarioUpdate) => {
 
                 usuarioUpdate.password = '**********';
+		console.log(err);
 
                 return response.status(200).json({
                     ok: true,
@@ -159,11 +165,16 @@ function subirPorTipo(tipo, id, nombreArchivo, response, img) {
 
             //Borrar imagen anterior <si existe>.
             if (filesystem.existsSync(pathOld)) {
-                filesystem.unlink(pathOld);
+		try{
+              	  filesystem.unlink(pathOld);  //Manejo de excepciones
+		}catch(err){
+		  console.log(err);	
+		}
             }
 
             ruta.img = nombreArchivo;
             ruta.save((err, rutaUpdate) => {
+		console.log(err);
 
                 return response.status(200).json({
                     ok: true,
@@ -247,22 +258,22 @@ function subirPorTipo(tipo, id, nombreArchivo, response, img) {
 
             switch (img) {
                 case '1':
-                    var pathOld = './uploads/marcadores/' + marcador.img1;
+                    var pathOld = './uploads/marcador/' + marcador.img1;
                     marcador.img1 = nombreArchivo;
                     break;
 
                 case '2':
-                    var pathOld = './uploads/marcadores/' + marcador.img2;
+                    var pathOld = './uploads/marcador/' + marcador.img2;
                     marcador.img2 = nombreArchivo;
                     break;
 
                 case '3':
-                    var pathOld = './uploads/marcadores/' + marcador.img3;
+                    var pathOld = './uploads/marcador/' + marcador.img3;
                     marcador.img3 = nombreArchivo;
                     break;
 
                 case '4':
-                    var pathOld = './uploads/marcadores/' + marcador.img4;
+                    var pathOld = './uploads/marcador/' + marcador.img4;
                     marcador.img4 = nombreArchivo;
 
                 default:
