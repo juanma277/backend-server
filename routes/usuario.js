@@ -168,7 +168,7 @@ app.post('/', (request, response) => {
 
 app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
-
+   
     Usuario.findByIdAndRemove(id, (err, usuarioDelete) => {
 
         if (err) {
@@ -196,7 +196,54 @@ app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN
 });
 
 // =========================================
-// Reset Password Usuario
+// Reset Password Usuario - Desde USER
+// =========================================
+
+app.post('/password/reset/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
+    var id = request.params.id;
+    var body = request.body;
+
+    Usuario.findById(id, (err, usuario) => {
+        if (err) {
+            return response.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario!',
+                errors: err
+            });
+        }
+
+        if (!usuario) {
+            return response.status(400).json({
+                ok: false,
+                mensaje: 'Usuario no existe!',
+                errors: { message: 'Usuario no encontrado!' }
+            });
+        }
+
+        usuario.password = bcrypt.hashSync(body.password, 10);
+
+        usuario.save((err, usuarioUpdate) => {
+            if (err) {
+                return response.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar usuario!',
+                    errors: err
+                });
+            }
+
+            usuarioUpdate.password = '**********';
+
+            response.status(200).json({
+                ok: true,
+                usuario: usuarioUpdate
+            });
+        });
+
+    });
+});
+
+// =========================================
+// Reset Password Usuario - Desde SUPER_USER
 // =========================================
 
 app.get('/reset/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
