@@ -5,6 +5,11 @@ var jwt = require('jsonwebtoken');
 var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
+//NODEMAILER
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+var xoauth2 = require('xoauth2');
+
 var Usuario = require('../models/usuario');
 
 // =========================================
@@ -168,7 +173,7 @@ app.post('/', (request, response) => {
 
 app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaADMIN_ROLE], (request, response) => {
     var id = request.params.id;
-   
+
     Usuario.findByIdAndRemove(id, (err, usuarioDelete) => {
 
         if (err) {
@@ -284,6 +289,69 @@ app.get('/reset/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaAD
                 usuario: usuarioUpdate
             });
         });
+
+    });
+});
+
+
+// =========================================
+// Reset Password Enviar Correo Electronico
+// =========================================
+
+app.get('/password/recordar/:email', (request, response) => {
+
+    var transport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'juanma27719@gmail.com',
+            pass: '1061692947S*'
+        }
+    });
+
+    var email = request.params.email;
+
+    var html = '<strong>HOLA MUNDO</strong>';
+    var mailOptions = {
+        from: 'Soporte JectApp',
+        to: email,
+        subject: 'Recuperacion de Contraseña',
+        text: 'Anteriormente solicitaste la recuperacion de la contraseña por favor sigue el siguiente link:',
+        html: html
+    }
+
+    Usuario.find({ email: email }, (err, usuario) => {
+        if (err) {
+            return response.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario!',
+                errors: err
+            });
+        }
+
+        if (usuario.length === 0) {
+            return response.status(400).json({
+                ok: false,
+                mensaje: 'Usuario no existe!',
+                errors: { message: 'El email ingresado no existe!' }
+            });
+        } else {
+            transport.sendMail(mailOptions, function(error, resp) {
+                if (error) {
+                    return response.status(200).json({
+                        ok: false,
+                        respuesta: 'Ha ocurrido un error por favor intentalo nuevamente.',
+                        error: error
+                    });
+                } else {
+                    return response.status(200).json({
+                        ok: true,
+                        usuario: usuario,
+                        respuesta: 'Email enviado'
+                    });
+                }
+            });
+
+        }
 
     });
 });
