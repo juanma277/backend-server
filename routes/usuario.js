@@ -293,10 +293,57 @@ app.get('/reset/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaAD
     });
 });
 
+// =========================================
+// Reset Password Usuario - Sin logueo
+// =========================================
 
-// =========================================
-// Reset Password Enviar Correo Electronico
-// =========================================
+app.post('/password/recover/:id', (request, response) => {
+    var id = request.params.id;
+    var body = request.body;
+
+    Usuario.findById(id, (err, usuario) => {
+        if (err) {
+            return response.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario!',
+                errors: err
+            });
+        }
+
+        if (!usuario) {
+            return response.status(400).json({
+                ok: false,
+                mensaje: 'Usuario no existe!',
+                errors: { message: 'Usuario no encontrado!' }
+            });
+        }
+
+        usuario.password = bcrypt.hashSync(body.password, 10);
+
+        usuario.save((err, usuarioUpdate) => {
+            if (err) {
+                return response.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar usuario!',
+                    errors: err
+                });
+            }
+
+            usuarioUpdate.password = '**********';
+
+            response.status(200).json({
+                ok: true,
+                usuario: usuarioUpdate
+            });
+        });
+
+    });
+});
+
+
+// ==============================================
+// Enviar Correo Electronico para Reset Password
+// ==============================================
 
 app.get('/password/recordar/:email', (request, response) => {
 
@@ -309,15 +356,7 @@ app.get('/password/recordar/:email', (request, response) => {
     });
 
     var email = request.params.email;
-
-    var html = '<strong>HOLA MUNDO</strong>';
-    var mailOptions = {
-        from: 'Soporte JectApp',
-        to: email,
-        subject: 'Recuperacion de Contraseña',
-        text: 'Anteriormente solicitaste la recuperacion de la contraseña por favor sigue el siguiente link:',
-        html: html
-    }
+    var token = bcrypt.hashSync(email, 10);
 
     Usuario.find({ email: email }, (err, usuario) => {
         if (err) {
@@ -335,6 +374,16 @@ app.get('/password/recordar/:email', (request, response) => {
                 errors: { message: 'El email ingresado no existe!' }
             });
         } else {
+            var html = "<h3>JectApp Recuperación de contraseña</h3><p><strong>Solicitaste recuperacion de la contraseña, por favor sigue el siguiente link: </strong></p>"  + "http://jectapp.com/#/recover/"+usuario[0]._id;
+
+            var mailOptions = {
+                from: 'Soporte JectApp',
+                to: email,
+                subject: 'Recuperacion de Contraseña',
+                text: 'Anteriormente solicitaste la recuperacion de la contraseña por favor sigue el siguiente link:',
+                html: html
+            }
+
             transport.sendMail(mailOptions, function(error, resp) {
                 if (error) {
                     return response.status(200).json({
