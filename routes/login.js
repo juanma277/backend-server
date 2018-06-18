@@ -212,7 +212,7 @@ function obtenerMenu(ROLE) {
             titulo: 'Mantenimiento',
             icono: 'mdi mdi-settings',
             submenu: [
-                { titulo: 'Usuarios', url: '/usuarios' },
+                //{ titulo: 'Usuarios', url: '/usuarios' },
                 { titulo: 'Vehiculos', url: '/vehiculos' },
                 { titulo: 'Rutas', url: '/rutas' }
             ]
